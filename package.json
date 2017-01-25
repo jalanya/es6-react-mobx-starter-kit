@@ -1,0 +1,29 @@
+{
+  "name": "es6-react-mobx-starter-kit",
+  "version": "0.0.1",
+  "description": "ES6 React-mobx starter-kit",
+  "scripts": {
+    "start": "babel-node server/server.js"
+  },
+  "author": "Jose Alanya",
+  "license": "ISC",
+  "dependencies": {
+    "babel-cli": "6.18.0",
+    "babel-core": "6.18.0",
+    "babel-preset-es2015": "^6.14.0",
+    "babel-preset-react": "6.16.0",
+    "babel-preset-stage-0": "6.16.0",
+    "babel-register": "6.18.0",
+    "eventsource-polyfill": "0.9.6",
+    "express": "4.14.0",
+    "open": "^0.0.5",
+    "react": "15.4.1",
+    "react-dom": "15.4.1"
+  },
+  "devDependencies": {
+    "babel-loader": "6.2.5",
+    "webpack": "1.14.0",
+    "webpack-dev-middleware": "1.4.0",
+    "webpack-hot-middleware": "2.6.0"
+  }
+}
