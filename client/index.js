@@ -1,4 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { render } from 'react-dom';
+import * as stores from './stores';
 
-ReactDOM.render(<div>Welcome to ES6 React-mobx starter-kit</div>, document.getElementById('app'));
+render(<div>Welcome to ES6 React-mobx starter-kit</div>, document.getElementById('app'));
