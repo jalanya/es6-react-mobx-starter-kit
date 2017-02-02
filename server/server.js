@@ -3,7 +3,9 @@ import webpack from 'webpack';
 import path from 'path';
 import config from '../webpack.config.dev';
 import open from 'open';
-
+import Index from '../views/index';
+import { renderReactTpl } from '../common/render-react-tpl';
+import { getAssets } from '../common/assets'
 /* eslint-disable no-console */
 const port = 3035;
 const app = express();
@@ -16,9 +18,27 @@ app.use(require('webpack-dev-middleware')(compiler, {
 
 app.use(require('webpack-hot-middleware')(compiler));
 
-app.get('*', function (req, res) {
-    res.sendFile(path.join(__dirname, '../client/index.html'));
+// TODO Use serve-static plugin instead of express.static
+app.use(express.static(path.join(__dirname, '..', 'static')));
+
+app.use(async (req, res) => {
+
+  const isDevelopment = true;
+
+  const { jsAssets, cssAssets } = await getAssets({
+    query: req.query,
+    isDevelopment,
+  });
+
+  const indexContent = renderReactTpl(Index, {
+    jsAssets: [
+      ...jsAssets,
+    ],
+    cssAssets,
+    title: 'Application Title' });
+  res.send(indexContent);
 });
+
 
 app.listen(port, function(err) {
   if (err) {
