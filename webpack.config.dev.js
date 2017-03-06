@@ -2,31 +2,81 @@ import webpack from 'webpack';
 import path from 'path';
 
 export default {
-  debug: true,
-  devtool: 'cheap-module-eval-source-map',
-  noInfo: false,
-  entry: [
-    'eventsource-polyfill', // necessary for hot reloading with IE
-    'webpack-hot-middleware/client?reload=true', //note that it reloads the page if hot module reloading fails.
-    './client/index.js'
-  ],
-  target: 'web',
+  devtool: 'cheap-module-source-map',
+  context: path.resolve('./'),
+  entry:
+     { main:
+        [ 'webpack-hot-middleware/client?path=/__webpack_hmr',
+          './client/index.js'] },
   output: {
-    path: __dirname + '/dist', // Note: Physical files are only output by the production build task `npm run build`.
-    publicPath: '/',
-    filename: 'bundle.js'
+    path: path.resolve('./static/dist'), // Note: Physical files are only output by the production build task `npm run build`.
+    publicPath: '/dist/',
+    filename: '[name].js'
   },
-  devServer: {
-    contentBase: './client'
+  resolve: {
+    modulesDirectories: [
+      'client',
+      'node_modules',
+      'common',
+    ],
+    extensions: ['', '.json','.js'],
   },
-  plugins: [
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin()
-  ],
   module: {
     loaders: [
       {
-        test: /\.js$/, include: path.join(__dirname, 'client'), loaders: ['babel'],
+        test: /\.js$|.svg$/,
+        exclude: [/\/node_modules\//],
+        loader: 'babel',
+        query: {
+          babelrc: false,
+          presets: [
+            [
+               "env",
+               {
+                 "targets": {
+                   "chrome": 52,
+                   "browsers": [
+                     "last 2 versions"
+                   ]
+                 }
+               }
+             ],
+            "react",
+            "stage-0"
+          ],
+          plugins: [
+            "transform-es2015-destructuring",
+            "transform-es2015-parameters",
+            "transform-object-rest-spread",
+            "transform-runtime",
+            "add-module-exports",
+            "transform-decorators-legacy",
+            "transform-react-display-name",
+            "typecheck",
+            [
+              "react-transform",
+              {
+                "transforms": [
+                  {
+                    "transform": "react-transform-catch-errors",
+                    "imports": [
+                      "react"
+                    ]
+                  },
+                  {
+                    "transform": "react-transform-hmr",
+                    "imports": [
+                      "react"
+                    ],
+                    "locals": [
+                      "module"
+                    ]
+                  }
+                ]
+              }
+            ]
+          ]
+        }
       },
       {
         test: /(\.css)$/, loaders: ['style', 'css'],
@@ -42,7 +92,11 @@ export default {
       },
       {
         test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: 'url?limit=10000&mimetype=image/svg+xml',
-      }
+      },
     ]
-  }
+  },
+  plugins: [
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.NoErrorsPlugin()
+  ],
 };

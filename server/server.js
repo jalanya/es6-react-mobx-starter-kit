@@ -11,9 +11,22 @@ const port = 3035;
 const app = express();
 const compiler = webpack(config);
 
+app.use((req, res, next) => {
+  // this fix is needed to make it work when using nginx?
+  if (req.url.indexOf('__webpack_hmr') > -1) {
+    // as described here http://stackoverflow.com/a/27960243/538752
+    res.set('X-Accel-Buffering', 'no');
+  }
+  next();
+});
+
 app.use(require('webpack-dev-middleware')(compiler, {
   noInfo: true,
-  publicPath: config.output.publicPath
+  publicPath: config.output.publicPath,
+  contentBase: './static/',
+  stats: {
+    colors: true,
+  },
 }));
 
 app.use(require('webpack-hot-middleware')(compiler));
